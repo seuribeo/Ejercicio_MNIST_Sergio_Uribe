@@ -39,14 +39,15 @@ def main():
         """
         <style>
         .main-title {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
-            color: #2E86C1;
+            color: #1F77B4;
             text-align: center;
+            margin-top: 20px;
         }
         .description {
-            font-size: 18px;
-            color: #555555;
+            font-size: 20px;
+            color: #333333;
             text-align: center;
             margin-bottom: 20px;
         }
@@ -55,6 +56,29 @@ def main():
             color: #888888;
             text-align: center;
             margin-top: 50px;
+        }
+        .upload-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .upload-button {
+            background-color: #1F77B4;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .upload-button:hover {
+            background-color: #155A8A;
+        }
+        .img-container {
+            text-align: center;
+        }
+        .img-preview {
+            margin-top: 20px;
         }
         </style>
         """,
@@ -86,19 +110,17 @@ def main():
 
         # Guardar la imagen
         file_path = save_image(uploaded_file)
-        st.success(f"Imagen guardada")
-
-        # Diccionario de clases para MNIST
-        mnist_classes = {i: str(i) for i in range(10)}
+        st.success(f"Imagen guardada correctamente en {file_path}")
 
         # Botón para clasificar la imagen
-        if st.button("Clasificar imagen"):
+        if st.button("Clasificar imagen", key="classify"):
             with st.spinner("Cargando modelo y clasificando..."):
                 model = load_model()
                 prediction = model.predict(preprocessed_image)
                 
-                # Verificar valores de predicción
-                st.success(f"La imagen fue clasificada como: {prediction}")
+                # Obtener la predicción
+                predicted_class = np.argmax(prediction)  # Asumiendo que el modelo es una red neuronal
+                st.success(f"La imagen fue clasificada como: {predicted_class} - {str(predicted_class)}")
 
     # Footer
     st.markdown('<div class="footer">© 2025 - Clasificación de imágenes con Streamlit</div>', unsafe_allow_html=True)
