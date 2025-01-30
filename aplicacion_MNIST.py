@@ -30,7 +30,7 @@ def preprocess_image(image):
     image = image.convert('L')  # Convertir a escala de grises
     image = image.resize((28, 28))  # Redimensionar a 28x28
     image_array = img_to_array(image) / 255.0  # Normalizar los píxeles
-    image_array = image_array.reshape(1, -1)  # Convertir a vector de 784 características
+    image_array = image_array.reshape(1, 28, 28, 1)  # Convertir a una forma de (1, 28, 28, 1)
     return image_array
 
 def main():
@@ -117,14 +117,13 @@ def main():
             with st.spinner("Cargando modelo y clasificando..."):
                 model = load_model()
                 prediction = model.predict(preprocessed_image)
-                
+
                 # Obtener la predicción
-                predicted_class = np.argmax(prediction)  # Asumiendo que el modelo es una red neuronal
-                st.success(f"La imagen fue clasificada como: {predicted_class} - {str(predicted_class)}")
+                predicted_class = np.argmax(prediction)  # Obtén la clase de mayor probabilidad
+                st.success(f"La imagen fue clasificada como: {predicted_class}")
 
     # Footer
     st.markdown('<div class="footer">© 2025 - Clasificación de imágenes con Streamlit</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
-
