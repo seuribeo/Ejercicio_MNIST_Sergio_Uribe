@@ -10,18 +10,19 @@ class_names = [str(i) for i in range(10)]
 
 def preprocess_image(image):
     image = image.convert('L')  # Convertir a escala de grises
-    image = image.resize((28, 28))
-    image_array = img_to_array(image) / 255.0  # Normalizar
-    image_array = np.expand_dims(image_array, axis=0)  # Asegurarse de que tiene la forma correcta
+    image = image.resize((28, 28))  # Redimensionar la imagen a 28x28
+    image_array = img_to_array(image) / 255.0  # Normalizar los valores de píxeles entre 0 y 1
+    image_array = image_array.flatten().reshape(1, -1)  # Aplanar para KNN y asegurarse de que sea 2D (1, 784)
     return image_array
 
 def load_model():
-    filename = "model_trained_classifier.pkl.gz"  # Ajusta el nombre de tu archivo de modelo
+    filename = "model_trained_classifier.pkl.gz"  # Nombre del archivo del modelo entrenado
     with gzip.open(filename, 'rb') as f:
-        model = pickle.load(f)
+        model = pickle.load(f)  # Cargar el modelo entrenado
     return model
 
 def main():
+    # Título con color
     st.markdown(
         '<h1 style="color: #4CAF50; text-align: center;">Clasificación de la base de datos MNIST</h1>',
         unsafe_allow_html=True
@@ -59,3 +60,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
