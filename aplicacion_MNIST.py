@@ -30,7 +30,7 @@ def preprocess_image(image):
     image = image.convert('L')  # Convertir a escala de grises
     image = image.resize((28, 28))  # Redimensionar a 28x28
     image_array = img_to_array(image) / 255.0  # Normalizar los píxeles
-    image_array = image_array.reshape(1, 28, 28, 1)  # Convertir a una forma de (1, 28, 28, 1)
+    image_array = image_array.reshape(1, -1)  # Convertir a vector de 784 características
     return image_array
 
 def main():
@@ -39,15 +39,14 @@ def main():
         """
         <style>
         .main-title {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: bold;
-            color: #1F77B4;
+            color: #2E86C1;
             text-align: center;
-            margin-top: 20px;
         }
         .description {
-            font-size: 20px;
-            color: #333333;
+            font-size: 18px;
+            color: #555555;
             text-align: center;
             margin-bottom: 20px;
         }
@@ -56,29 +55,6 @@ def main():
             color: #888888;
             text-align: center;
             margin-top: 50px;
-        }
-        .upload-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .upload-button {
-            background-color: #1F77B4;
-            color: white;
-            font-size: 16px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-        .upload-button:hover {
-            background-color: #155A8A;
-        }
-        .img-container {
-            text-align: center;
-        }
-        .img-preview {
-            margin-top: 20px;
         }
         </style>
         """,
@@ -110,17 +86,19 @@ def main():
 
         # Guardar la imagen
         file_path = save_image(uploaded_file)
-        st.success(f"Imagen guardada correctamente en {file_path}")
+        st.success(f"Imagen guardada")
+
+        # Diccionario de clases para MNIST
+        mnist_classes = {i: str(i) for i in range(10)}
 
         # Botón para clasificar la imagen
-        if st.button("Clasificar imagen", key="classify"):
+        if st.button("Clasificar imagen"):
             with st.spinner("Cargando modelo y clasificando..."):
                 model = load_model()
                 prediction = model.predict(preprocessed_image)
-
-                # Obtener la predicción
-                predicted_class = np.argmax(prediction)  # Obtén la clase de mayor probabilidad
-                st.success(f"La imagen fue clasificada como: {predicted_class}")
+                
+                # Verificar valores de predicción
+                st.success(f"La imagen fue clasificada como: {prediction}")
 
     # Footer
     st.markdown('<div class="footer">© 2025 - Clasificación de imágenes con Streamlit</div>', unsafe_allow_html=True)
