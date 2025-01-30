@@ -12,7 +12,7 @@ def preprocess_image(image):
     image = image.convert('L')  # Convertir a escala de grises
     image = image.resize((28, 28))
     image_array = img_to_array(image) / 255.0  # Normalizar
-    image_array = image_array.reshape(1, 28, 28, 1)  # Formato correcto para CNN
+    image_array = image_array.flatten().reshape(1, -1)  # Aplanar para sklearn
     return image_array
 
 def load_model():
@@ -36,7 +36,7 @@ def main():
 
         preprocessed_image = preprocess_image(image)
         st.image(
-            preprocessed_image[0].reshape(28, 28),
+            preprocessed_image.reshape(28, 28),
             caption="Imagen Preprocesada",
             use_container_width=True
         )
