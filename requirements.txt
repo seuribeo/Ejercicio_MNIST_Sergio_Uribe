@@ -1,2 +1,7 @@
-tensorflow
+streamlit
+pandas
+numpy
 scikit-learn
+seaborn
+plotly
+tensorflow
