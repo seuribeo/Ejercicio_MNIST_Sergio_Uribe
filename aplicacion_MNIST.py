@@ -62,8 +62,8 @@ def main():
     )
 
     # Título y descripción
-    st.markdown('<div class="main-title">Clasificación de Dígitos MNIST</div>', unsafe_allow_html=True)
-    st.markdown('<div class="description">Sube una imagen de un dígito y la clasificaremos usando un modelo preentrenado.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-title">Clasificación de dígitos (MNIST)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="description">Ingresa una imagen de un dígito y la clasificaremos usando un modelo preentrenado.</div>', unsafe_allow_html=True)
 
     # Sidebar con información del mejor modelo
     st.sidebar.header("Mejor Modelo Encontrado")
