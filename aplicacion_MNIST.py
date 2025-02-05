@@ -2,16 +2,14 @@ import streamlit as st
 from PIL import Image
 import os
 import numpy as np
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import img_to_array
 import gzip
 import pickle
-from tensorflow.keras.preprocessing.image import img_to_array
 
 # Crear un directorio para guardar las imágenes si no existe
 UPLOAD_FOLDER = "uploaded_images"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-# Diccionario de clases para MNIST
-mnist_classes = {i: str(i) for i in range(10)}
 
 def save_image(uploaded_file):
     """Guarda la imagen subida en el directorio UPLOAD_FOLDER."""
@@ -21,7 +19,7 @@ def save_image(uploaded_file):
     return file_path
 
 def load_model():
-    """Carga el mejor modelo encontrado con sus pesos."""
+    """Cargar el modelo y sus pesos desde el archivo model_weights.pkl."""
     filename = 'model_trained_classifier.pkl.gz'
     with gzip.open(filename, 'rb') as f:
         model = pickle.load(f)
@@ -67,7 +65,7 @@ def main():
     st.markdown('<div class="main-title">Clasificación de Dígitos MNIST</div>', unsafe_allow_html=True)
     st.markdown('<div class="description">Sube una imagen de un dígito y la clasificaremos usando un modelo preentrenado.</div>', unsafe_allow_html=True)
 
-    # Mostrar los mejores hiperparámetros
+    # Sidebar con información del mejor modelo
     st.sidebar.header("Mejor Modelo Encontrado")
     st.sidebar.write("**Modelo:** KNeighborsClassifier")
     st.sidebar.write("**Escalador:** Ninguno")
@@ -103,8 +101,7 @@ def main():
             with st.spinner("Cargando modelo y clasificando..."):
                 model = load_model()
                 prediction = model.predict(preprocessed_image)
-                predicted_label = mnist_classes[np.argmax(prediction)]  # Obtener la clase con mayor probabilidad
-                st.success(f"La imagen fue clasificada como: **{predicted_label}**")
+                st.success(f"La imagen fue clasificada como: {prediction}")
 
     # Footer
     st.markdown('<div class="footer">© 2025 - Clasificación de imágenes con Streamlit</div>', unsafe_allow_html=True)
