@@ -2,14 +2,16 @@ import streamlit as st
 from PIL import Image
 import os
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras.preprocessing.image import img_to_array
 import gzip
 import pickle
+from tensorflow.keras.preprocessing.image import img_to_array
 
 # Crear un directorio para guardar las imágenes si no existe
 UPLOAD_FOLDER = "uploaded_images"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Diccionario de clases para MNIST
+mnist_classes = {i: str(i) for i in range(10)}
 
 def save_image(uploaded_file):
     """Guarda la imagen subida en el directorio UPLOAD_FOLDER."""
@@ -19,7 +21,7 @@ def save_image(uploaded_file):
     return file_path
 
 def load_model():
-    """Cargar el modelo y sus pesos desde el archivo model_weights.pkl."""
+    """Carga el mejor modelo encontrado con sus pesos."""
     filename = 'model_trained_classifier.pkl.gz'
     with gzip.open(filename, 'rb') as f:
         model = pickle.load(f)
@@ -65,6 +67,15 @@ def main():
     st.markdown('<div class="main-title">Clasificación de Dígitos MNIST</div>', unsafe_allow_html=True)
     st.markdown('<div class="description">Sube una imagen de un dígito y la clasificaremos usando un modelo preentrenado.</div>', unsafe_allow_html=True)
 
+    # Mostrar los mejores hiperparámetros
+    st.sidebar.header("Mejor Modelo Encontrado")
+    st.sidebar.write("**Modelo:** KNeighborsClassifier")
+    st.sidebar.write("**Escalador:** Ninguno")
+    st.sidebar.write("**Hiperparámetros:**")
+    st.sidebar.write("- n_neighbors = 4")
+    st.sidebar.write("- p = 3")
+    st.sidebar.write("**Accuracy:** 87.17%")
+
     # Widget de subida de archivos
     uploaded_file = st.file_uploader("Selecciona una imagen (PNG, JPG, JPEG):", type=["png", "jpg", "jpeg"])
 
@@ -77,28 +88,23 @@ def main():
         preprocessed_image = preprocess_image(image)
 
         # Mostrar imágenes antes y después del preprocesamiento
-        st.subheader("Imágenes antes y después del preprocesamiento")
         col1, col2 = st.columns(2)
         with col1:
-            st.image(image, caption="Imagen original", use_container_width=True, output_format="auto")
+            st.image(image, caption="Imagen original", use_column_width=True)
         with col2:
-            st.image(preprocessed_image.reshape(28, 28), caption="Imagen preprocesada", use_container_width=True, output_format="auto")
+            st.image(preprocessed_image.reshape(28, 28), caption="Imagen preprocesada", use_column_width=True)
 
         # Guardar la imagen
-        file_path = save_image(uploaded_file)
-        st.success(f"Imagen guardada")
-
-        # Diccionario de clases para MNIST
-        mnist_classes = {i: str(i) for i in range(10)}
+        save_image(uploaded_file)
+        st.success("Imagen guardada correctamente.")
 
         # Botón para clasificar la imagen
         if st.button("Clasificar imagen"):
             with st.spinner("Cargando modelo y clasificando..."):
                 model = load_model()
                 prediction = model.predict(preprocessed_image)
-                
-                # Verificar valores de predicción
-                st.success(f"La imagen fue clasificada como: {prediction}")
+                predicted_label = mnist_classes[np.argmax(prediction)]  # Obtener la clase con mayor probabilidad
+                st.success(f"La imagen fue clasificada como: **{predicted_label}**")
 
     # Footer
     st.markdown('<div class="footer">© 2025 - Clasificación de imágenes con Streamlit</div>', unsafe_allow_html=True)
